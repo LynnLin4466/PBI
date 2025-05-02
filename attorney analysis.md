@@ -1,10 +1,10 @@
-First of all, we will need to change the data format from raw data exported from eCM/NG to a format that ranks the attorney collection efficiency by proportions.
+First of all, we will need to change the data format from raw data exported from eCM/NG to a format that ranks the attorney collection efficiency by proportions. When organizing these kind of group by data format, it is very integral to include null handling so thast the overall data voids of data error. 
 ```Power BI
 let
     Source = Excel.Workbook(File.Contents("C:\Users\LLin\OneDrive - PROCO, LLC\Attachments\2020 and Greater INACTIVE Patients 1.xlsx"), null, true),
     Table1_Table = Source{[Item="Table1",Kind="Table"]}[Data],
     #"Changed Type4" = Table.TransformColumnTypes(Table1_Table,{{"_NexGen Patient ID", Int64.Type}, {"DateTreatmentStart", type date}, {"Discharge Date", type date}, {"CaseType", type text}, {"Source", type text}, {"Attorney_Most Recent", type text}, {"Attorney_Most Recent_Status", type text}, {"Attached/Unattached", type text}, {"File Status", type text}, {"File Status Calculated INACTIVE Date", type date}}),
-    #"Filtered Rows2" = Table.SelectRows(#"Changed Type4", each ([CaseType] = "MVA")),
+    #"Filtered Rows2" = Table.SelectRows(#"Changed Type4", each ([CaseType] = "MVA")), //Be very careful here, as we are only looking at MVA cases for Nathan's ad hoc data requests
     #"Replaced Value" = Table.ReplaceValue(#"Filtered Rows2","Ped","PED",Replacer.ReplaceText,{"CaseType"}),
     #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","Well","WELL",Replacer.ReplaceText,{"CaseType"}),
     #"Filtered Rows" = Table.SelectRows(#"Replaced Value1", each [_NexGen Patient ID] <> null and [_NexGen Patient ID] <> ""),
